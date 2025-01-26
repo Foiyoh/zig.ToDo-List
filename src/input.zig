@@ -2,6 +2,7 @@ const std = @import("std");
 
 const InputError = error{
     BufferOverflow,
+    InvalidInput,
 };
 
 pub fn readNextLine(allocator: std.mem.Allocator) ![]u8 {
@@ -24,13 +25,12 @@ pub fn readNextLineBufferd(allocator: std.mem.Allocator, buffer_size: usize) ![]
     errdefer allocator.free(input_buffer);
 
     const input_string: ?[]u8 = stdin.readUntilDelimiterOrEof(input_buffer, '\n') catch |err| {
-        if (err == error.StreamTooLong) return error.BufferOverflow;
+        if (err == error.StreamTooLong) {
+            try stdin.skipUntilDelimiterOrEof('\n');
+            return error.BufferOverflow;
+        }
         return err;
     };
 
-    if (input_string) |str| {
-        return str;
-    } else {
-        return &[_]u8{};
-    }
+    return input_string orelse error.InvalidInput;
 }
