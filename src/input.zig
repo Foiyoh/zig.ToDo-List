@@ -28,8 +28,7 @@ pub fn readNextLineBufferd(allocator: std.mem.Allocator, buffer_size: usize) ![]
         if (err == error.StreamTooLong) {
             try stdin.skipUntilDelimiterOrEof('\n');
             return error.BufferOverflow;
-        }
-        return err;
+        } else return err;
     };
 
     return input_string orelse error.InvalidInput;

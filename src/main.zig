@@ -13,12 +13,11 @@ pub fn inputLoop() !void {
     const allocator = std.heap.page_allocator;
     while (true) {
         try stdout.writeAll(menu_string);
-        const input_value = std.mem.trim(u8, input.readNextLineBufferd(allocator, 16) catch |err| {
+        const input_value: []const u8 = std.mem.trim(u8, input.readNextLineBufferd(allocator, 16) catch |err| {
             if (err == error.BufferOverflow) {
                 try stdout.writeAll("Input to long\n");
                 continue;
-            }
-            return err;
+            } else return err;
         }, "\r\n");
         defer allocator.free(input_value);
 
